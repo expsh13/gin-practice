@@ -1,32 +1,18 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/http"
+
+	"github.com/expsh13/go-todo/handlers"
 )
 
 func main() {
-	helloHandler := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Hello, world!\n")
-	}
 
-	addTodoHandler := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "add todo")
-	}
-
-	updateTodoHandler := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "update todo")
-	}
-
-	deleteTodoHandler := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "delete todo")
-	}
-
-	http.HandleFunc("/hello", helloHandler)
-	http.HandleFunc("/add", addTodoHandler)
-	http.HandleFunc("/update", updateTodoHandler)
-	http.HandleFunc("/delete", deleteTodoHandler)
+	http.HandleFunc("/hello", handlers.HelloHandler)
+	http.HandleFunc("/add", handlers.AddTodoHandler)
+	http.HandleFunc("/update", handlers.UpdateTodoHandler)
+	http.HandleFunc("/delete", handlers.DeleteTodoHandler)
 
 	log.Println("server start")
 	log.Fatal(http.ListenAndServe(":8080", nil))
