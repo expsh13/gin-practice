@@ -5,16 +5,18 @@ import (
 	"net/http"
 
 	"github.com/expsh13/go-todo/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
+	r := mux.NewRouter()
 
-	http.HandleFunc("/hello", handlers.HelloHandler)
-	http.HandleFunc("/todoGet", handlers.GetTodoHandler)
-	http.HandleFunc("/todoAdd", handlers.AddTodoHandler)
-	http.HandleFunc("/todoUpdate", handlers.UpdateTodoHandler)
-	http.HandleFunc("/todoDelete", handlers.DeleteTodoHandler)
+	r.HandleFunc("/hello", handlers.HelloHandler).Methods(http.MethodGet)
+	r.HandleFunc("/todo", handlers.GetTodoHandler).Methods(http.MethodGet)
+	r.HandleFunc("/todo", handlers.AddTodoHandler).Methods(http.MethodPost)
+	r.HandleFunc("/todo", handlers.UpdateTodoHandler).Methods(http.MethodPut)
+	r.HandleFunc("/todo", handlers.DeleteTodoHandler).Methods(http.MethodDelete)
 
 	log.Println("server start")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

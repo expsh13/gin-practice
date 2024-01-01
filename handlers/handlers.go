@@ -6,12 +6,7 @@ import (
 )
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		io.WriteString(w, "Hello, world!\n")
-	} else {
-		// Invalid method というレスポンスを、405 番のステータスコードと共に返す
-		http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
-	}
+	io.WriteString(w, "Hello, world!\n")
 }
 
 // GET /todo
