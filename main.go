@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -31,7 +32,13 @@ func main() {
 		CreatedAt: time.Now(),
 	}
 
-	fmt.Println(todo)
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%s\n", jsonData)
 
 	log.Println("server start")
 	log.Fatal(http.ListenAndServe(":8080", r))
