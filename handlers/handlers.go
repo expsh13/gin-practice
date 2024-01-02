@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 
+	"github.com/expsh13/go-todo/models"
 	"github.com/gorilla/mux"
 )
 
@@ -29,14 +31,29 @@ func GetTodoHandler(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	resString := fmt.Sprintf("get List (page %d)\n", page)
-	io.WriteString(w, resString)
+	fmt.Println(page)
+
+	todoList := []models.TodoList{models.Todo1, models.Todo2}
+	jsonData, err := json.Marshal(todoList)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(jsonData)
 
 }
 
 // POST /api/todo
 func AddTodoHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "add todo\n")
+	todo := models.Todo1
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(jsonData)
 }
 
 // PUT /api/todo/{id}
@@ -46,11 +63,31 @@ func UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
 		return
 	}
-	resString := fmt.Sprintf("update No.%d\n", listID)
-	io.WriteString(w, resString)
+	fmt.Println(listID)
+
+	todo := models.Todo1
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
 
 // DELETE /api/todo/{id}
 func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "delete todo\n")
+	listID, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+		return
+	}
+	fmt.Println(listID)
+
+	todo := models.Todo1
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonData)
 }
