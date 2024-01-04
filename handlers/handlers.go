@@ -62,7 +62,14 @@ func AddTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	todo := models.Todo1
+	var reqTodo models.TodoList
+	if err := json.Unmarshal(reqBodybuffer, &reqTodo); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+		return
+	}
+
+	todo := reqTodo
+	// todo := models.Todo1
 	jsonData, err := json.Marshal(todo)
 	if err != nil {
 		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
