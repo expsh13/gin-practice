@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -47,36 +46,15 @@ func GetTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 // POST /api/todo
 func AddTodoHandler(w http.ResponseWriter, r *http.Request) {
-	length, err := strconv.Atoi(r.Header.Get(("Content-Length")))
-	if err != nil {
-		http.Error(w, "cannot get content length\n", http.StatusBadRequest)
-		return
-	}
-
-	reqBodybuffer := make([]byte, length)
-
-	if _, err := r.Body.Read(reqBodybuffer); !errors.Is(err, io.EOF) {
-		http.Error(w, "fail to get request body\n", http.StatusBadRequest)
-		return
-	}
-
-	defer r.Body.Close()
 
 	var reqTodo models.TodoList
-	if err := json.Unmarshal(reqBodybuffer, &reqTodo); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&reqTodo); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
-		return
 	}
 
 	todo := reqTodo
 	// todo := models.Todo1
-	jsonData, err := json.Marshal(todo)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
-	}
-
-	w.Write(jsonData)
+	json.NewEncoder(w).Encode(todo)
 }
 
 // PUT /api/todo/{id}
