@@ -34,19 +34,12 @@ func GetTodoHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(page)
 
 	todoList := []models.TodoList{models.Todo1, models.Todo2}
-	jsonData, err := json.Marshal(todoList)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
-	}
-
-	w.Write(jsonData)
+	json.NewEncoder(w).Encode(todoList)
 
 }
 
 // POST /api/todo
 func AddTodoHandler(w http.ResponseWriter, r *http.Request) {
-
 	var reqTodo models.TodoList
 	if err := json.NewDecoder(r.Body).Decode(&reqTodo); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
@@ -66,13 +59,14 @@ func UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(listID)
 
-	todo := models.Todo1
-	jsonData, err := json.Marshal(todo)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
+	var reqTodo models.TodoList
+	if err := json.NewDecoder(r.Body).Decode(&reqTodo); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
-	w.Write(jsonData)
+
+	todo := models.Todo1
+
+	json.NewEncoder(w).Encode(todo)
 }
 
 // DELETE /api/todo/{id}
@@ -85,10 +79,5 @@ func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(listID)
 
 	todo := models.Todo1
-	jsonData, err := json.Marshal(todo)
-	if err != nil {
-		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
-		return
-	}
-	w.Write(jsonData)
+	json.NewEncoder(w).Encode(todo)
 }
