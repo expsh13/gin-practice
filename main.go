@@ -30,6 +30,7 @@ func main() {
 	}
 	defer db.Close()
 
+	// select
 	todoID := 7
 	const sqlStr = `
 	select *
@@ -52,6 +53,24 @@ func main() {
 	if createdTime.Valid {
 		todo.CreatedAt = createdTime.Time
 	}
-
 	fmt.Printf("%+v\n", todo)
+
+	// insert
+	// データを挿入する処理
+	insertTodo := models.TodoList{
+		Title: "insert test",
+	}
+	const sqlStrInsert = `
+	insert into todo (title, created_at) values
+	(?, now());
+	`
+	result, err := db.Exec(sqlStrInsert, insertTodo.Title)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// 結果を確認
+	fmt.Println(result.LastInsertId())
+	fmt.Println(result.RowsAffected())
+
 }
