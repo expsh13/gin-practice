@@ -30,33 +30,28 @@ func main() {
 	}
 	defer db.Close()
 
+	todoID := 7
 	const sqlStr = `
 	select *
- 	from todo;
+ 	from todo
+	where todo_id = ?;
  	`
-	rows, err := db.Query(sqlStr)
+	row := db.QueryRow(sqlStr, todoID)
+	if err := row.Err(); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var todo models.TodoList
+	var createdTime sql.NullTime
+	err = row.Scan(&todo.ID, &todo.Title, &createdTime)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer rows.Close()
-
-	todoArray := make([]models.TodoList, 0)
-	for rows.Next() {
-		var todo models.TodoList
-		var createdTime sql.NullTime
-
-		err := rows.Scan(&todo.ID, &todo.Title, &createdTime)
-		if createdTime.Valid {
-			todo.CreatedAt = createdTime.Time
-		}
-
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			todoArray = append(todoArray, todo)
-		}
+	if createdTime.Valid {
+		todo.CreatedAt = createdTime.Time
 	}
 
-	fmt.Printf("%+v\n", todoArray)
+	fmt.Printf("%+v\n", todo)
 }
