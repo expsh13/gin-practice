@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/expsh13/go-todo/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -28,9 +29,34 @@ func main() {
 		fmt.Println(err)
 	}
 	defer db.Close()
-	if err := db.Ping(); err != nil {
+
+	const sqlStr = `
+	select *
+ 	from todo;
+ 	`
+	rows, err := db.Query(sqlStr)
+	if err != nil {
 		fmt.Println(err)
-	} else {
-		fmt.Println("connect to DB")
+		return
 	}
+	defer rows.Close()
+
+	todoArray := make([]models.TodoList, 0)
+	for rows.Next() {
+		var todo models.TodoList
+		var createdTime sql.NullTime
+
+		err := rows.Scan(&todo.ID, &todo.Title, &createdTime)
+		if createdTime.Valid {
+			todo.CreatedAt = createdTime.Time
+		}
+
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			todoArray = append(todoArray, todo)
+		}
+	}
+
+	fmt.Printf("%+v\n", todoArray)
 }
