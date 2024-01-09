@@ -73,4 +73,19 @@ func main() {
 	fmt.Println(result.LastInsertId())
 	fmt.Println(result.RowsAffected())
 
+	// update
+	updateTodo := models.TodoList{
+		Title: "update test",
+	}
+	const sqlStrUpdate = `
+	update todo set title = ? where todo_id = ?;
+	`
+	updateResult, err := db.Exec(sqlStrUpdate, updateTodo.Title, 8)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// 結果を確認
+	fmt.Println(updateResult.RowsAffected())
+
 }
