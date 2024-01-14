@@ -31,7 +31,24 @@ func SelectTodoList(db *sql.DB, page int) ([]models.TodoList, error) {
 	}
 
 	return todoArray, nil
+}
 
+// GET /api/todo/{id}
+func SelectTodoDetail(db *sql.DB, todoId int) (models.TodoList, error) {
+	const sqlStr = `
+		select *
+		from todo
+		where todo_id = ?;`
+
+	row := db.QueryRow(sqlStr, todoId)
+	// if err := row.Err(); err != nil {
+	// 	return models.TodoList{}, err
+	// }
+
+	var todo models.TodoList
+	row.Scan(&todo.ID, &todo.Title)
+
+	return todo, nil
 }
 
 // POST /api/todo

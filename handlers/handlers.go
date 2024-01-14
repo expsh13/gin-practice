@@ -35,6 +35,20 @@ func GetTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	todoList := []models.TodoList{models.Todo1, models.Todo2}
 	json.NewEncoder(w).Encode(todoList)
+}
+
+// GET /api/todo/{id}
+func GetTodoDetailHandler(w http.ResponseWriter, r *http.Request) {
+	listID, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+		return
+	}
+	fmt.Println(listID)
+
+	todo := models.Todo1
+
+	json.NewEncoder(w).Encode(todo)
 
 }
 
