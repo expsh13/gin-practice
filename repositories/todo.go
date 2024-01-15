@@ -41,12 +41,20 @@ func SelectTodoDetail(db *sql.DB, todoId int) (models.TodoList, error) {
 		where todo_id = ?;`
 
 	row := db.QueryRow(sqlStr, todoId)
-	// if err := row.Err(); err != nil {
-	// 	return models.TodoList{}, err
-	// }
+	if err := row.Err(); err != nil {
+		return models.TodoList{}, err
+	}
 
 	var todo models.TodoList
-	row.Scan(&todo.ID, &todo.Title)
+	var createdTime sql.NullTime
+	err := row.Scan(&todo.ID, &todo.Title, &createdTime)
+	if err != nil {
+		return models.TodoList{}, err
+	}
+
+	if createdTime.Valid {
+		todo.CreatedAt = createdTime.Time
+	}
 
 	return todo, nil
 }
